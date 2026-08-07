@@ -1,13 +1,25 @@
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { usePlayer } from '../context/PlayerContext';
-import { CloseIcon, NextIcon, PauseIcon, PlayIcon, PrevIcon, ShuffleIcon } from './icons';
+import {
+  ChevronUpIcon,
+  CloseIcon,
+  NextIcon,
+  PauseIcon,
+  PlayIcon,
+  PrevIcon,
+  ShuffleIcon,
+} from './icons';
+import ExpandedPlayer from './ExpandedPlayer';
 import { formatTime } from '../utils/formatTime';
 import styles from './PlayerBar.module.css';
 
 interface PlayerBarProps {
   onGoToArtist: (artist: string) => void;
+  embedded?: boolean;
 }
 
-export default function PlayerBar({ onGoToArtist }: PlayerBarProps) {
+export default function PlayerBar({ onGoToArtist, embedded = false }: PlayerBarProps) {
   const {
     currentSong,
     isPlaying,
@@ -21,6 +33,7 @@ export default function PlayerBar({ onGoToArtist }: PlayerBarProps) {
     seek,
     closePlayer,
   } = usePlayer();
+  const [expanded, setExpanded] = useState(false);
 
   if (!currentSong) {
     return null;
@@ -34,7 +47,11 @@ export default function PlayerBar({ onGoToArtist }: PlayerBarProps) {
   };
 
   return (
-    <section className={styles.player} aria-label="Reproductor">
+    <>
+      <section
+        className={`${styles.player} ${embedded ? styles.embedded : ''}`}
+        aria-label="Reproductor"
+      >
       <button
         type="button"
         className={styles.close}
@@ -49,6 +66,16 @@ export default function PlayerBar({ onGoToArtist }: PlayerBarProps) {
         src={currentSong.coverUrl}
         alt={`Portada de ${currentSong.title}`}
         referrerPolicy="no-referrer"
+        role="button"
+        tabIndex={0}
+        onClick={() => setExpanded(true)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            setExpanded(true);
+          }
+        }}
+        aria-label="Expandir reproductor"
       />
 
       <div className={styles.meta}>
@@ -102,8 +129,25 @@ export default function PlayerBar({ onGoToArtist }: PlayerBarProps) {
         <button type="button" className={styles.iconBtn} onClick={next} aria-label="Siguiente">
           <NextIcon size={18} />
         </button>
-        <span className={styles.ghost} aria-hidden="true" />
+        <button
+          type="button"
+          className={styles.iconBtn}
+          onClick={() => setExpanded(true)}
+          aria-label="Expandir reproductor"
+        >
+          <ChevronUpIcon size={16} />
+        </button>
       </div>
-    </section>
+      </section>
+
+      {expanded &&
+        createPortal(
+          <ExpandedPlayer
+            onClose={() => setExpanded(false)}
+            onGoToArtist={onGoToArtist}
+          />,
+          document.body,
+        )}
+    </>
   );
 }

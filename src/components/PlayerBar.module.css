@@ -47,6 +47,7 @@
   height: auto;
   border-radius: 8px;
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.55);
+  cursor: pointer;
 }
 
 .meta {
@@ -155,12 +156,91 @@
   box-shadow: 0 2px 14px rgba(255, 255, 255, 0.35);
 }
 
-.ghost {
-  width: 23px;
-}
-
 @media (max-width: 768px) {
-  .player {
-    padding: 12px 12px calc(14px + env(safe-area-inset-bottom));
+  .player:not(.embedded) {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    z-index: 900;
+    margin-top: 0;
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    grid-template-areas:
+      'cover meta controls close'
+      'progress progress progress progress';
+    align-items: center;
+    gap: 6px 10px;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
+  }
+
+  .player:not(.embedded) .close {
+    position: static;
+    grid-area: close;
+    width: 24px;
+    height: 24px;
+  }
+
+  .player:not(.embedded) .cover {
+    grid-area: cover;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 52px;
+    border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  }
+
+  .player:not(.embedded) .meta {
+    grid-area: meta;
+    text-align: left;
+    min-width: 0;
+  }
+
+  .player:not(.embedded) .title {
+    font-size: 13px;
+    margin: 0 0 2px;
+  }
+
+  .player:not(.embedded) .artist {
+    font-size: 11px;
+    display: block;
+    text-align: left;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .player:not(.embedded) .progressRow {
+    grid-area: progress;
+    gap: 6px;
+  }
+
+  .player:not(.embedded) .progress {
+    height: 3px;
+  }
+
+  .player:not(.embedded) .time {
+    font-size: 9px;
+    min-width: 24px;
+  }
+
+  .player:not(.embedded) .controls {
+    grid-area: controls;
+    gap: 4px;
+  }
+
+  .player:not(.embedded) .iconBtn {
+    padding: 2px;
+  }
+
+  .player:not(.embedded) .playBtn {
+    width: 32px;
+    height: 32px;
   }
 }

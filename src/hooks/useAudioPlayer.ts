@@ -18,6 +18,8 @@ export function useAudioPlayer(allSongs: Song[]) {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [randomMode, setRandomMode] = useState(false);
+  const [queue, setQueue] = useState<Song[]>([]);
+  const [queueIndex, setQueueIndex] = useState(-1);
 
   randomModeRef.current = randomMode;
 
@@ -25,8 +27,11 @@ export function useAudioPlayer(allSongs: Song[]) {
     const audio = audioRef.current;
     if (!audio) return;
 
+    const index = section.findIndex((item) => item.id === song.id);
     queueRef.current = section;
-    queueIndexRef.current = section.findIndex((item) => item.id === song.id);
+    queueIndexRef.current = index;
+    setQueue(section);
+    setQueueIndex(index);
     setCurrentSong(song);
     setCurrentTime(0);
     setDuration(0);
@@ -182,6 +187,8 @@ export function useAudioPlayer(allSongs: Song[]) {
       currentTime,
       duration,
       randomMode,
+      queue,
+      queueIndex,
       playSong,
       playRandom,
       togglePlay,
@@ -198,6 +205,8 @@ export function useAudioPlayer(allSongs: Song[]) {
       currentTime,
       duration,
       randomMode,
+      queue,
+      queueIndex,
       playSong,
       playRandom,
       togglePlay,

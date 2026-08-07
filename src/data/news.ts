@@ -13,6 +13,14 @@ const at = (day: number, month: number, year: number, hours: number, minutes: nu
 
 export const newsItems: NewsItem[] = [
   {
+    id: 'reproductor-expandido-beta',
+    tag: 'dev',
+    title: 'Desarrollo interno: reproductor expandido en Beta',
+    description:
+      'Estamos probando una nueva versión del reproductor que se puede agrandar tocando la portada o el botón de expandir. En modo expandido vas a poder ver las canciones siguientes de la cola, las relacionadas del mismo artista y, en el futuro, la letra de cada canción. Por ahora está en fase beta: el panel se desliza desde la derecha en PC y ocupa la pantalla en Android, y seguimos puliendo los detalles antes de lanzarlo oficialmente.',
+    publishedAt: at(7, 8, 2026, 15, 45),
+  },
+  {
     id: 'actualizacion-reproductor-artistas',
     tag: 'update',
     title: 'Nuevo reproductor y mejoras en perfiles de artistas',
