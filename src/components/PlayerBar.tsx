@@ -1,6 +1,16 @@
 import { useState } from 'react';
 import { usePlayer } from '../context/PlayerContext';
-import { ChevronDownIcon, ChevronUpIcon, NextIcon, PauseIcon, PlayIcon, PrevIcon } from './icons';
+import EqualizerBars from './EqualizerBars';
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  CloseIcon,
+  NextIcon,
+  PauseIcon,
+  PlayIcon,
+  PrevIcon,
+  ShuffleIcon,
+} from './icons';
 import { formatTime } from '../utils/formatTime';
 import styles from './PlayerBar.module.css';
 
@@ -14,10 +24,13 @@ export default function PlayerBar({ onGoToArtist }: PlayerBarProps) {
     isPlaying,
     currentTime,
     duration,
+    randomMode,
     togglePlay,
+    toggleRandomMode,
     next,
     prev,
     seek,
+    closePlayer,
   } = usePlayer();
   const [expanded, setExpanded] = useState(false);
 
@@ -38,8 +51,14 @@ export default function PlayerBar({ onGoToArtist }: PlayerBarProps) {
     onGoToArtist(artist);
   };
 
+  const handleClose = () => {
+    setExpanded(false);
+    closePlayer();
+  };
+
   return (
     <>
+      {/* Reproductor expandido (pantalla completa) */}
       <div
         className={`${styles.expanded} ${expanded ? styles.expandedOpen : ''}`}
         aria-hidden={!expanded}
@@ -48,21 +67,36 @@ export default function PlayerBar({ onGoToArtist }: PlayerBarProps) {
           className={styles.expandedBg}
           style={{ backgroundImage: `url(${currentSong.coverUrl})` }}
         />
-        <button
-          type="button"
-          className={styles.expandedClose}
-          onClick={() => setExpanded(false)}
-          aria-label="Minimizar reproductor"
-        >
-          <ChevronDownIcon size={22} />
-        </button>
 
-        <img
-          className={`${styles.expandedCover} ${isPlaying ? styles.expandedCoverPlaying : ''}`}
-          src={currentSong.coverUrl}
-          alt={`Portada de ${currentSong.title}`}
-          referrerPolicy="no-referrer"
-        />
+        <div className={styles.expandedTop}>
+          <button
+            type="button"
+            className={styles.expandedAction}
+            onClick={handleClose}
+            aria-label="Cerrar reproductor"
+          >
+            <CloseIcon size={20} />
+          </button>
+          <span className={styles.expandedTopLabel}>Reproduciendo</span>
+          <button
+            type="button"
+            className={styles.expandedAction}
+            onClick={() => setExpanded(false)}
+            aria-label="Minimizar reproductor"
+          >
+            <ChevronDownIcon size={22} />
+          </button>
+        </div>
+
+        <div className={styles.expandedCoverWrap}>
+          <img
+            className={`${styles.expandedCover} ${isPlaying ? styles.expandedCoverPlaying : ''}`}
+            src={currentSong.coverUrl}
+            alt={`Portada de ${currentSong.title}`}
+            referrerPolicy="no-referrer"
+          />
+          {isPlaying && <EqualizerBars className={styles.expandedCoverBars} />}
+        </div>
 
         <div className={styles.expandedMeta}>
           <p className={styles.expandedTitle}>{currentSong.title}</p>
@@ -85,7 +119,9 @@ export default function PlayerBar({ onGoToArtist }: PlayerBarProps) {
             aria-valuemax={100}
             aria-valuenow={Math.round(progress)}
           >
-            <div className={styles.fill} style={{ width: `${progress}%` }} />
+            <div className={styles.fill} style={{ width: `${progress}%` }}>
+              <span className={styles.thumb} />
+            </div>
           </div>
           <div className={styles.expandedTimes}>
             <span className={styles.time}>{formatTime(currentTime)}</span>
@@ -94,7 +130,21 @@ export default function PlayerBar({ onGoToArtist }: PlayerBarProps) {
         </div>
 
         <div className={styles.expandedButtons}>
-          <button type="button" className={styles.expandedIconBtn} onClick={prev} aria-label="Anterior">
+          <button
+            type="button"
+            className={`${styles.expandedIconBtn} ${randomMode ? styles.expandedIconActive : ''}`}
+            onClick={toggleRandomMode}
+            aria-label="Reproducción aleatoria"
+            aria-pressed={randomMode}
+          >
+            <ShuffleIcon size={26} />
+          </button>
+          <button
+            type="button"
+            className={styles.expandedIconBtn}
+            onClick={prev}
+            aria-label="Anterior"
+          >
             <PrevIcon size={30} />
           </button>
           <button
@@ -105,12 +155,19 @@ export default function PlayerBar({ onGoToArtist }: PlayerBarProps) {
           >
             {isPlaying ? <PauseIcon size={34} /> : <PlayIcon size={34} />}
           </button>
-          <button type="button" className={styles.expandedIconBtn} onClick={next} aria-label="Siguiente">
+          <button
+            type="button"
+            className={styles.expandedIconBtn}
+            onClick={next}
+            aria-label="Siguiente"
+          >
             <NextIcon size={30} />
           </button>
+          <span className={styles.expandedGhost} aria-hidden="true" />
         </div>
       </div>
 
+      {/* Barra compacta */}
       <div className={styles.player}>
         <div
           className={styles.progressTop}
@@ -124,27 +181,50 @@ export default function PlayerBar({ onGoToArtist }: PlayerBarProps) {
           <div className={styles.fill} style={{ width: `${progress}%` }} />
         </div>
 
-        <button
-          type="button"
-          className={styles.info}
-          onClick={() => setExpanded(true)}
-          aria-label="Expandir reproductor"
-        >
-          <img
-            className={styles.cover}
-            src={currentSong.coverUrl}
-            alt={`Portada de ${currentSong.title}`}
-            referrerPolicy="no-referrer"
-          />
-          <div className={styles.meta}>
-            <p className={styles.title}>{currentSong.title}</p>
-            <p className={styles.artist}>{currentSong.artist}</p>
-          </div>
-          <ChevronUpIcon size={18} className={styles.infoChevron} />
-        </button>
+        <div className={styles.left}>
+          <button
+            type="button"
+            className={styles.info}
+            onClick={() => setExpanded(true)}
+            aria-label="Expandir reproductor"
+          >
+            <span className={styles.coverWrap}>
+              <img
+                className={styles.cover}
+                src={currentSong.coverUrl}
+                alt={`Portada de ${currentSong.title}`}
+                referrerPolicy="no-referrer"
+              />
+              {isPlaying && <EqualizerBars className={styles.coverBars} />}
+            </span>
+            <span className={styles.meta}>
+              <span className={styles.title}>{currentSong.title}</span>
+              <span className={styles.artist}>{currentSong.artist}</span>
+            </span>
+            <ChevronUpIcon size={18} className={styles.infoChevron} />
+          </button>
+
+          <button
+            type="button"
+            className={styles.close}
+            onClick={handleClose}
+            aria-label="Cerrar reproductor"
+          >
+            <CloseIcon size={16} />
+          </button>
+        </div>
 
         <div className={styles.controls}>
           <div className={styles.buttons}>
+            <button
+              type="button"
+              className={`${styles.iconBtn} ${randomMode ? styles.iconActive : ''}`}
+              onClick={toggleRandomMode}
+              aria-label="Reproducción aleatoria"
+              aria-pressed={randomMode}
+            >
+              <ShuffleIcon size={18} />
+            </button>
             <button type="button" className={styles.iconBtn} onClick={prev} aria-label="Anterior">
               <PrevIcon />
             </button>
@@ -172,7 +252,9 @@ export default function PlayerBar({ onGoToArtist }: PlayerBarProps) {
               aria-valuemax={100}
               aria-valuenow={Math.round(progress)}
             >
-              <div className={styles.fill} style={{ width: `${progress}%` }} />
+              <div className={styles.fill} style={{ width: `${progress}%` }}>
+                <span className={styles.thumb} />
+              </div>
             </div>
             <span className={styles.time}>{formatTime(duration)}</span>
           </div>

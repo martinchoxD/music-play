@@ -100,6 +100,10 @@ export function useAudioPlayer(allSongs: Song[]) {
     [duration],
   );
 
+  const toggleRandomMode = useCallback(() => {
+    setRandomMode((prev) => !prev);
+  }, []);
+
   const closePlayer = useCallback(() => {
     const audio = audioRef.current;
     audio?.pause();
@@ -181,6 +185,7 @@ export function useAudioPlayer(allSongs: Song[]) {
       playSong,
       playRandom,
       togglePlay,
+      toggleRandomMode,
       next,
       prev,
       seek,
@@ -196,6 +201,7 @@ export function useAudioPlayer(allSongs: Song[]) {
       playSong,
       playRandom,
       togglePlay,
+      toggleRandomMode,
       next,
       prev,
       seek,
