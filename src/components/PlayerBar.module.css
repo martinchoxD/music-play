@@ -19,6 +19,19 @@
   align-items: center;
   gap: 14px;
   min-width: 0;
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  font-family: inherit;
+  transition: opacity 0.2s;
+}
+
+.info:hover {
+  opacity: 0.85;
 }
 
 .cover {
@@ -31,6 +44,7 @@
 
 .meta {
   min-width: 0;
+  flex: 1;
 }
 
 .title {
@@ -44,36 +58,23 @@
 .artist {
   font-size: 12px;
   color: var(--text-sub);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.artistBtn {
-  font-size: 12px;
+.infoChevron {
   color: var(--text-sub);
-  background: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: color 0.2s;
+  flex-shrink: 0;
+  opacity: 0.6;
+  transition:
+    color 0.2s,
+    opacity 0.2s;
 }
 
-.artistBtn:hover {
+.info:hover .infoChevron {
   color: var(--accent);
-  text-decoration: underline;
-}
-
-.close {
-  background: transparent;
-  border: none;
-  color: var(--text-sub);
-  cursor: pointer;
-  padding: 4px;
-  margin-left: auto;
-  display: flex;
-  transition: color 0.2s;
-}
-
-.close:hover {
-  color: var(--text);
+  opacity: 1;
 }
 
 .controls {
@@ -151,28 +152,250 @@
   transition: width 0.1s linear;
 }
 
+/* --- Barra de progreso superior (solo móvil) --- */
+.progressTop {
+  display: none;
+}
+
+/* --- Reproductor expandido (pantalla completa) --- */
+.expanded {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+  padding: 40px 30px;
+  background: radial-gradient(120% 80% at 50% 0%, #141414 0%, #050505 60%);
+  opacity: 0;
+  transform: translateY(40px);
+  pointer-events: none;
+  visibility: hidden;
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease,
+    visibility 0s linear 0.35s;
+}
+
+.expandedOpen {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  visibility: visible;
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease,
+    visibility 0s;
+}
+
+.expandedBg {
+  position: absolute;
+  inset: -10%;
+  z-index: -1;
+  background-size: cover;
+  background-position: center;
+  filter: blur(50px) brightness(0.35);
+  pointer-events: none;
+}
+
+.expandedClose {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+
+.expandedClose:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: scale(1.05);
+}
+
+.expandedCover {
+  width: min(320px, 64vw);
+  aspect-ratio: 1;
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  object-fit: cover;
+}
+
+.expandedCoverPlaying {
+  animation: coverBreath 2.6s ease-in-out infinite;
+}
+
+@keyframes coverBreath {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 24px 70px rgba(29, 185, 84, 0.28);
+  }
+}
+
+.expandedMeta {
+  text-align: center;
+}
+
+.expandedTitle {
+  font-size: 26px;
+  font-weight: 800;
+  margin: 0 0 6px;
+  letter-spacing: -0.5px;
+}
+
+.expandedArtist {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--text-sub);
+  font-size: 15px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.expandedArtist:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.expandedProgress {
+  width: min(560px, 90vw);
+}
+
+.expandedProgress .progress {
+  height: 6px;
+}
+
+.expandedTimes {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.expandedButtons {
+  display: flex;
+  align-items: center;
+  gap: 42px;
+}
+
+.expandedIconBtn {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  transition:
+    color 0.2s,
+    transform 0.2s;
+}
+
+.expandedIconBtn:hover {
+  color: var(--accent);
+  transform: scale(1.08);
+}
+
+.expandedPlay {
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    background 0.2s;
+}
+
+.expandedPlay:hover {
+  transform: scale(1.06);
+  background: var(--accent-hover);
+}
+
 @media (max-width: 900px) {
   .player {
     left: 0;
+    height: 72px;
     grid-template-columns: 1fr auto;
-    gap: 10px;
-    padding: 0 12px;
+    gap: 12px;
+    padding: 0 14px;
+  }
+
+  .progressTop {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #3e3e3e;
+    cursor: pointer;
+  }
+
+  .progressTop .fill {
+    height: 100%;
   }
 
   .cover {
+    width: 48px;
+    height: 48px;
+  }
+
+  .controls {
+    flex-direction: row;
+  }
+
+  .buttons {
+    gap: 0;
+  }
+
+  .iconBtn {
+    display: none;
+  }
+
+  .playBtn {
     width: 44px;
     height: 44px;
   }
 
-  .close {
+  .progressRow {
     display: none;
   }
 
-  .controls {
-    min-width: 0;
+  .expanded {
+    gap: 22px;
+    padding: 24px;
+    justify-content: center;
   }
 
-  .progressRow {
-    max-width: 220px;
+  .expandedCover {
+    width: min(280px, 70vw);
+  }
+
+  .expandedTitle {
+    font-size: 22px;
+  }
+
+  .expandedButtons {
+    gap: 36px;
   }
 }

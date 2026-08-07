@@ -24,6 +24,10 @@
   backdrop-filter: blur(8px);
 }
 
+.menuBtn {
+  display: none;
+}
+
 .content {
   padding: 0 40px 60px;
 }
@@ -35,6 +39,40 @@
 
   .header {
     padding: 15px 20px;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .menuBtn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition:
+      border-color 0.2s,
+      background 0.2s;
+  }
+
+  .menuBtn:hover {
+    border-color: var(--accent);
+    background: var(--bg-elevated);
+  }
+
+  .menuBtn span {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 1px;
+    transition: background 0.2s;
   }
 
   .content {

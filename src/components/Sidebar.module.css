@@ -138,42 +138,6 @@
   color: var(--text);
 }
 
-/* --- Botón menú móvil (hamburguesa) --- */
-.mobileMenuBtn {
-  display: none;
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  width: 45px;
-  height: 45px;
-  background: var(--accent);
-  border: none;
-  border-radius: 50%;
-  z-index: 1100;
-  cursor: pointer;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
-  transition:
-    opacity 0.3s ease,
-    visibility 0.3s;
-}
-
-.mobileMenuBtn.hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.mobileMenuBtn span {
-  display: block;
-  width: 20px;
-  height: 2px;
-  background: #fff;
-  border-radius: 1px;
-}
-
 /* --- Botón cerrar sidebar móvil --- */
 .closeBtn {
   display: none;
@@ -190,10 +154,6 @@
 }
 
 @media (max-width: 768px) {
-  .mobileMenuBtn {
-    display: flex;
-  }
-
   .closeBtn {
     display: block;
   }

@@ -14,7 +14,7 @@ import styles from './App.module.css';
 export default function App() {
   const [view, setView] = useState<View>('inicio');
   const [selectedArtist, setSelectedArtist] = useState('Eve');
-  const [query, setQuery] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const goToArtist = (artist: string) => {
     setSelectedArtist(artist);
@@ -24,15 +24,30 @@ export default function App() {
   return (
     <PlayerProvider>
       <div className={styles.app}>
-        <Sidebar currentView={view} onNavigate={setView} />
+        <Sidebar
+          currentView={view}
+          onNavigate={setView}
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+        />
 
         <main className={styles.main}>
           <header className={styles.header}>
-            <SearchBar value={query} onChange={setQuery} />
+            <button
+              type="button"
+              className={styles.menuBtn}
+              onClick={() => setSidebarOpen(true)}
+              aria-label="Abrir menú"
+            >
+              <span />
+              <span />
+              <span />
+            </button>
+            <SearchBar />
           </header>
 
           <div className={styles.content}>
-            {view === 'inicio' && <HomeView query={query} onGoToArtist={goToArtist} />}
+            {view === 'inicio' && <HomeView onGoToArtist={goToArtist} />}
             {view === 'noticias' && <NewsView />}
             {view === 'artistas' && <ArtistsView onGoToArtist={goToArtist} />}
             {view === 'artista-detalle' && <ArtistDetailView artist={selectedArtist} />}

@@ -100,3 +100,19 @@ export function CloseIcon({ size = 16, className }: IconProps) {
     </svg>
   );
 }
+
+export function ChevronUpIcon({ size = 18, className }: IconProps) {
+  return (
+    <svg {...svgProps(size)} className={className}>
+      <polyline points="18 15 12 9 6 15" />
+    </svg>
+  );
+}
+
+export function ChevronDownIcon({ size = 18, className }: IconProps) {
+  return (
+    <svg {...svgProps(size)} className={className}>
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  );
+}

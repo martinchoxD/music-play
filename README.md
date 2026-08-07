@@ -10,15 +10,16 @@ Reproductor de música web inspirado en Spotify, construido con **React**, **Typ
 
 - **Reproducción continua por artista**: al elegir una canción, se encola la sección completa (siguiente/anterior/auto-siguiente).
 - **Modo aleatorio**: reproduce canciones al azar de todo el catálogo desde la barra lateral.
-- **Búsqueda en tiempo real**: filtra por título o artista, con mensaje de "sin resultados".
-- **Navegación por vistas**: Inicio (con búsqueda), Playlists, Noticias, Artistas y perfil de artista, gestionadas desde la barra lateral.
+- **Búsqueda con sugerencias**: dropdown con las canciones que coinciden (título o artista) sin alterar el catálogo; al elegir una se reproduce con su cola.
+- **Navegación por vistas**: Inicio, Playlists, Noticias, Artistas y perfil de artista, gestionadas desde la barra lateral.
 - **Playlists propias**: creá tus playlists, agregá/quitá canciones, renombrá y eliminá. Se guardan en el `localStorage` del navegador (cada usuario conserva las suyas).
 - **Centro de novedades**: noticias del proyecto con etiquetas (update/dev/info) y fecha relativa ("hace Xd Xh").
 - **Perfil de artista**: portada, oyentes, bio y tabla de canciones del artista con reproducción por sección.
 - **Navegación por artistas**: accesos rápidos en la barra lateral con scroll suave y click al artista para abrir su perfil.
 - **Media Session**: controles de reproducción desde el sistema (pantalla de bloqueo, auriculares).
 - **Barra de progreso interactiva** con tiempos de la canción.
-- **Diseño responsive**: sidebar tipo drawer con menú hamburguesa en móviles (≤768px), tablas con scroll horizontal.
+- **Reproductor expandible**: tocá la zona de la canción para abrirlo a pantalla completa con portada animada, progreso y controles; minimizalo con el chevron.
+- **Diseño responsive**: sidebar tipo drawer con menú hamburguesa integrado al header en móviles (≤768px), tablas con scroll horizontal y reproductor adaptado (progreso superior, controles grandes).
 - **Accesibilidad**: elementos con `aria-label`, `aria-pressed` y navegación por teclado en botones.
 - **Indicador visual** de la canción en reproducción (barras ecualizadoras animadas).
 
