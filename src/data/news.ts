@@ -13,6 +13,14 @@ const at = (day: number, month: number, year: number, hours: number, minutes: nu
 
 export const newsItems: NewsItem[] = [
   {
+    id: 'actualizacion-reproductor-artistas',
+    tag: 'update',
+    title: 'Nuevo reproductor y mejoras en perfiles de artistas',
+    description:
+      'El reproductor ahora vive integrado en la barra lateral, con la portada en su formato original y los controles de siempre. Además, en los perfiles de artista en Android las canciones se muestran en filas compactas con desplazamiento horizontal, para recorrer el catálogo sin tanto scroll.',
+    publishedAt: at(7, 8, 2026, 13, 50),
+  },
+  {
     id: 'playlists-personales',
     tag: 'update',
     title: '¡Playlists personales ya disponibles!',

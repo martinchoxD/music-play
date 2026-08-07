@@ -135,47 +135,72 @@
     font-size: 32px;
   }
 
-  /* Las filas de canciones pasan a ser tarjetas con scroll horizontal */
+  /* 5 canciones en lista vertical + scroll horizontal para ver las otras 5 */
+  .songList {
+    display: block;
+    border-collapse: initial;
+  }
+
   .songList tbody {
-    display: flex;
-    gap: 15px;
+    display: grid;
+    grid-template-rows: repeat(5, auto);
+    grid-auto-flow: column;
+    grid-auto-columns: 240px;
+    gap: 8px 14px;
     overflow-x: auto;
-    padding: 10px 0 20px;
+    padding: 10px 0 25px;
     scrollbar-width: thin;
     scrollbar-color: var(--accent) var(--bg-elevated);
   }
 
+  .songList tbody::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .songList tbody::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 3px;
+  }
+
   .songList tr {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    text-align: center;
-    flex-shrink: 0;
-    width: 140px;
+    gap: 10px;
+    width: 100%;
     background: var(--bg-surface);
-    padding: 12px;
+    padding: 8px 10px;
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.02);
+  }
+
+  .songList tr.playing {
+    border-color: var(--accent);
+    background: var(--bg-elevated);
+  }
+
+  .songList tr.playing .trackTitle {
+    color: var(--accent);
   }
 
   .songList td {
     display: block;
     padding: 0;
-    width: 100%;
+    min-width: 0;
   }
 
   .trackImg {
-    width: 100%;
-    margin-bottom: 8px;
+    width: auto;
+    padding: 0 !important;
+    flex-shrink: 0;
   }
 
   .trackImgContainer {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1;
+    width: 40px;
+    height: 40px;
   }
 
   .trackTitle {
+    flex: 1;
     font-size: 13px;
     white-space: nowrap;
     overflow: hidden;
@@ -183,8 +208,13 @@
   }
 
   .trackArtist {
-    text-align: center;
+    text-align: right;
     font-size: 11px;
-    margin-top: 4px;
+    color: var(--text-sub);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60px;
+    flex-shrink: 0;
   }
 }

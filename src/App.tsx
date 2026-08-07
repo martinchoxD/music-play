@@ -7,7 +7,6 @@ import NewsView from './components/NewsView';
 import ArtistsView from './components/ArtistsView';
 import ArtistDetailView from './components/ArtistDetailView';
 import PlaylistsView from './components/PlaylistsView';
-import PlayerBar from './components/PlayerBar';
 import type { View } from './types/view';
 import styles from './App.module.css';
 
@@ -29,6 +28,7 @@ export default function App() {
           onNavigate={setView}
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
+          onGoToArtist={goToArtist}
         />
 
         <main className={styles.main}>
@@ -43,7 +43,7 @@ export default function App() {
               <span />
               <span />
             </button>
-            <SearchBar />
+            <SearchBar onGoToArtist={goToArtist} />
           </header>
 
           <div className={styles.content}>
@@ -54,8 +54,6 @@ export default function App() {
             {view === 'playlists' && <PlaylistsView onGoToArtist={goToArtist} />}
           </div>
         </main>
-
-        <PlayerBar onGoToArtist={goToArtist} />
       </div>
     </PlayerProvider>
   );

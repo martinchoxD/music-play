@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { View } from '../types/view';
 import { usePlayer } from '../context/PlayerContext';
 import { useInstallPrompt } from '../hooks/useInstallPrompt';
+import PlayerBar from './PlayerBar';
 import styles from './Sidebar.module.css';
 
 interface NavItem {
@@ -31,9 +32,16 @@ interface SidebarProps {
   onNavigate: (view: View) => void;
   isOpen: boolean;
   onClose: () => void;
+  onGoToArtist: (artist: string) => void;
 }
 
-export default function Sidebar({ currentView, onNavigate, isOpen, onClose }: SidebarProps) {
+export default function Sidebar({
+  currentView,
+  onNavigate,
+  isOpen,
+  onClose,
+  onGoToArtist,
+}: SidebarProps) {
   const { playRandom, randomMode } = usePlayer();
   const { isInstalled, install } = useInstallPrompt();
   const [showGuide, setShowGuide] = useState(false);
@@ -138,6 +146,8 @@ export default function Sidebar({ currentView, onNavigate, isOpen, onClose }: Si
           )}
         </>
       )}
+
+      <PlayerBar onGoToArtist={onGoToArtist} />
     </nav>
   );
 }

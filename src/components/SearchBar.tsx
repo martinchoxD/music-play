@@ -1,13 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePlayer } from '../context/PlayerContext';
-import { songs } from '../data/songs';
+import { artists, songs } from '../data/songs';
+import { artistsInfo } from '../data/artists';
 import { SearchIcon, CloseIcon } from './icons';
 import type { Song } from '../types/song';
 import styles from './SearchBar.module.css';
 
-const MAX_RESULTS = 8;
+const MAX_SONGS = 8;
+const MAX_ARTISTS = 4;
 
-export default function SearchBar() {
+interface SearchBarProps {
+  onGoToArtist: (artist: string) => void;
+}
+
+export default function SearchBar({ onGoToArtist }: SearchBarProps) {
   const { playSong } = usePlayer();
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
@@ -15,7 +21,7 @@ export default function SearchBar() {
 
   const normalizedQuery = query.trim().toLowerCase();
 
-  const results = useMemo(() => {
+  const songResults = useMemo(() => {
     if (!normalizedQuery) return [];
     return songs
       .filter(
@@ -23,8 +29,22 @@ export default function SearchBar() {
           song.title.toLowerCase().includes(normalizedQuery) ||
           song.artist.toLowerCase().includes(normalizedQuery),
       )
-      .slice(0, MAX_RESULTS);
+      .slice(0, MAX_SONGS);
   }, [normalizedQuery]);
+
+  const artistResults = useMemo(() => {
+    if (!normalizedQuery) return [];
+    const matched = new Set<string>();
+    for (const song of songResults) {
+      matched.add(song.artist);
+    }
+    for (const artist of artists) {
+      if (artist.toLowerCase().includes(normalizedQuery)) {
+        matched.add(artist);
+      }
+    }
+    return artists.filter((artist) => matched.has(artist)).slice(0, MAX_ARTISTS);
+  }, [normalizedQuery, songResults]);
 
   useEffect(() => {
     const onPointerDown = (event: MouseEvent) => {
@@ -37,9 +57,15 @@ export default function SearchBar() {
   }, []);
 
   const handleSelect = (song: Song) => {
-    playSong(song, results.length > 0 ? results : songs);
+    playSong(song, songResults.length > 0 ? songResults : songs);
     setQuery('');
     setOpen(false);
+  };
+
+  const handleGoToArtist = (artist: string) => {
+    setQuery('');
+    setOpen(false);
+    onGoToArtist(artist);
   };
 
   const showDropdown = open && normalizedQuery.length > 0;
@@ -80,34 +106,71 @@ export default function SearchBar() {
 
       {showDropdown && (
         <ul className={styles.dropdown} role="listbox" aria-label="Resultados de búsqueda">
-          {results.length > 0 ? (
-            results.map((song) => (
-              <li key={song.id}>
-                <button
-                  type="button"
-                  className={styles.result}
-                  onClick={() => handleSelect(song)}
-                  role="option"
-                >
-                  <img
-                    className={styles.resultImg}
-                    src={song.coverUrl}
-                    alt=""
-                    loading="lazy"
-                    referrerPolicy="no-referrer"
-                  />
-                  <span className={styles.resultMeta}>
-                    <span className={styles.resultTitle}>{song.title}</span>
-                    <span className={styles.resultArtist}>{song.artist}</span>
-                  </span>
-                  <span className={styles.resultPlay} aria-hidden="true">
-                    ▶
-                  </span>
-                </button>
-              </li>
-            ))
-          ) : (
-            <li className={styles.noResults}>No se encontraron canciones para “{query}”.</li>
+          {artistResults.length > 0 && (
+            <>
+              <li className={styles.groupLabel}>Artistas</li>
+              {artistResults.map((artist) => {
+                const info = artistsInfo[artist];
+                return (
+                  <li key={`artist-${artist}`}>
+                    <button
+                      type="button"
+                      className={styles.result}
+                      onClick={() => handleGoToArtist(artist)}
+                      role="option"
+                    >
+                      <img
+                        className={`${styles.resultImg} ${styles.artistImg}`}
+                        src={info?.img}
+                        alt=""
+                        loading="lazy"
+                        referrerPolicy="no-referrer"
+                      />
+                      <span className={styles.resultMeta}>
+                        <span className={styles.resultTitle}>{artist}</span>
+                        <span className={styles.resultArtist}>{info?.listeners}</span>
+                      </span>
+                      <span className={styles.resultPlay} aria-hidden="true">
+                        →
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </>
+          )}
+          {songResults.length > 0 && (
+            <>
+              <li className={styles.groupLabel}>Canciones</li>
+              {songResults.map((song) => (
+                <li key={song.id}>
+                  <button
+                    type="button"
+                    className={styles.result}
+                    onClick={() => handleSelect(song)}
+                    role="option"
+                  >
+                    <img
+                      className={styles.resultImg}
+                      src={song.coverUrl}
+                      alt=""
+                      loading="lazy"
+                      referrerPolicy="no-referrer"
+                    />
+                    <span className={styles.resultMeta}>
+                      <span className={styles.resultTitle}>{song.title}</span>
+                      <span className={styles.resultArtist}>{song.artist}</span>
+                    </span>
+                    <span className={styles.resultPlay} aria-hidden="true">
+                      ▶
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </>
+          )}
+          {artistResults.length === 0 && songResults.length === 0 && (
+            <li className={styles.noResults}>No se encontraron resultados para “{query}”.</li>
           )}
         </ul>
       )}
