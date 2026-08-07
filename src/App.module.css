@@ -15,6 +15,8 @@
   padding: 20px 40px;
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  gap: 14px;
   position: sticky;
   top: 0;
   z-index: 10;

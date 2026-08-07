@@ -126,6 +126,17 @@ export const audioBaseUrl = 'https://res.cloudinary.com/<TU_CLOUD_NAME>/video/up
 
 > Recordá configurar el audio (opción B) para que la demo funcione en producción.
 
+## 📲 Instalación como app (PWA)
+
+MusicPlay es una **Progressive Web App**: se puede instalar en el escritorio o en el teléfono y abrirse en su propia ventana, sin la barra del navegador.
+
+- **Windows/Chrome/Edge**: al visitar el sitio, en la barra lateral aparece el botón **"📲 Descargar app"** (o el ícono de instalación en la barra de direcciones). Se crea un acceso directo en el escritorio y un tile en el menú Inicio.
+- **Android**: en Chrome → menú → *Instalar aplicación*.
+- **iOS (Safari)**: botón *Compartir* → *Agregar a pantalla de inicio*.
+- **Funciona offline**: el service worker cachea la app (los audios se siguen sirviendo desde Cloudinary cuando hay conexión).
+
+El manifest, los iconos y el service worker se generan automáticamente en el build (`vite-plugin-pwa`). Los iconos viven en `public/icons/`.
+
 ## 📝 Notas
 
 - Las carátulas se cargan desde las URL provistas originalmente; se pueden cambiar fácilmente en `src/data/songs.ts`.

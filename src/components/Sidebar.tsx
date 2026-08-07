@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { View } from '../types/view';
 import { usePlayer } from '../context/PlayerContext';
+import { useInstallPrompt } from '../hooks/useInstallPrompt';
 import styles from './Sidebar.module.css';
 
 interface NavItem {
@@ -32,6 +33,7 @@ interface SidebarProps {
 
 export default function Sidebar({ currentView, onNavigate }: SidebarProps) {
   const { playRandom, randomMode } = usePlayer();
+  const { canInstall, install } = useInstallPrompt();
   const [isOpen, setIsOpen] = useState(false);
 
   const navigate = (view: View) => {
@@ -99,6 +101,20 @@ export default function Sidebar({ currentView, onNavigate }: SidebarProps) {
             </button>
           </li>
         </ul>
+
+        {canInstall && (
+          <button
+            type="button"
+            className={styles.installBtn}
+            onClick={() => {
+              void install();
+              setIsOpen(false);
+            }}
+          >
+            <span className={styles.icon} aria-hidden="true">📲</span>
+            <span className={styles.label}>Descargar app</span>
+          </button>
+        )}
       </nav>
     </>
   );
