@@ -13,6 +13,14 @@ const at = (day: number, month: number, year: number, hours: number, minutes: nu
 
 export const newsItems: NewsItem[] = [
   {
+    id: 'playlists-personales',
+    tag: 'update',
+    title: '¡Playlists personales ya disponibles!',
+    description:
+      'Ahora cada usuario puede crear sus propias playlists directamente en la aplicación. Podés agregar y quitar canciones del catálogo, renombrarlas y eliminarlas. Todo se guarda automáticamente en tu navegador (localStorage), así que cada persona arma y conserva su propia colección.',
+    publishedAt: at(6, 8, 2026, 14, 30),
+  },
+  {
     id: 'artistas-disponible',
     tag: 'update',
     title: '¡Función de Artistas ya disponible!',
