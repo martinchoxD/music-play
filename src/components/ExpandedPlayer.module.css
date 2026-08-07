@@ -211,7 +211,6 @@
   display: flex;
   gap: 6px;
   padding: 14px 16px 0;
-  border-bottom: 1px solid var(--border);
 }
 
 .tab {
@@ -312,6 +311,81 @@
   margin: 0 0 6px;
   color: var(--text);
   font-weight: 700;
+}
+
+.lyrics {
+  padding: 12px 0;
+}
+
+.lyricsTools {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 2px;
+}
+
+.segmented {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 999px;
+}
+
+.segOption {
+  border: none;
+  background: transparent;
+  color: var(--text-sub);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.segOption:hover {
+  color: #fff;
+}
+
+.segActive,
+.segActive:hover {
+  background: #fff;
+  color: #000;
+}
+
+.lyricLine {
+  padding: 10px 4px;
+  color: var(--text-sub);
+  font-size: 15px;
+  line-height: 1.5;
+  opacity: 0.35;
+  transition:
+    opacity 0.3s,
+    color 0.3s,
+    font-size 0.3s,
+    transform 0.3s;
+}
+
+.lyricPast {
+  opacity: 0.55;
+}
+
+.lyricActive {
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+.plainLyrics {
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-sub);
+  padding: 12px 4px;
 }
 
 @media (min-width: 769px) {

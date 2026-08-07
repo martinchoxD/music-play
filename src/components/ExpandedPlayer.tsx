@@ -1,8 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { Song } from '../types/song';
 import { usePlayer } from '../context/PlayerContext';
 import { songsByArtist } from '../data/songs';
+import { useLyrics } from '../hooks/useLyrics';
+import { useRomaji } from '../hooks/useRomaji';
+import type { LyricLine } from '../data/lyrics';
 import { formatTime } from '../utils/formatTime';
 import {
   CloseIcon,
@@ -27,8 +30,67 @@ const TABS: Array<{ id: TabId; label: string }> = [
   { id: 'letra', label: 'Letra' },
 ];
 
+interface LyricsViewProps {
+  lines: LyricLine[];
+  audioRef: React.RefObject<HTMLAudioElement | null>;
+}
+
+function LyricsView({ lines, audioRef }: LyricsViewProps) {
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const lastIndexRef = useRef(-1);
+  const activeRef = useRef<HTMLParagraphElement | null>(null);
+
+  useEffect(() => {
+    let rafId = 0;
+    const tick = () => {
+      const audio = audioRef.current;
+      const time = audio ? audio.currentTime : 0;
+      let index = -1;
+      for (let i = 0; i < lines.length; i++) {
+        if (lines[i].time <= time) {
+          index = i;
+        } else {
+          break;
+        }
+      }
+      if (index !== lastIndexRef.current) {
+        lastIndexRef.current = index;
+        setActiveIndex(index);
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [lines, audioRef]);
+
+  useEffect(() => {
+    activeRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }, [activeIndex]);
+
+  return (
+    <div className={styles.lyrics}>
+      {lines.map((line, index) => (
+        <p
+          key={index}
+          ref={index === activeIndex ? activeRef : undefined}
+          className={`${styles.lyricLine} ${
+            index === activeIndex
+              ? styles.lyricActive
+              : index < activeIndex
+                ? styles.lyricPast
+                : ''
+          }`}
+        >
+          {line.text}
+        </p>
+      ))}
+    </div>
+  );
+}
+
 export default function ExpandedPlayer({ onClose, onGoToArtist }: ExpandedPlayerProps) {
   const {
+    audioRef,
     currentSong,
     isPlaying,
     currentTime,
@@ -43,7 +105,10 @@ export default function ExpandedPlayer({ onClose, onGoToArtist }: ExpandedPlayer
     seek,
     playSong,
   } = usePlayer();
+  const lyrics = useLyrics(currentSong, duration);
+  const romaji = useRomaji(currentSong, lyrics.lines, lyrics.plain);
   const [tab, setTab] = useState<TabId>('siguientes');
+  const [lyricMode, setLyricMode] = useState<'japanese' | 'romaji'>('japanese');
   const [dragX, setDragX] = useState(0);
   const [dragging, setDragging] = useState(false);
   const dragXRef = useRef(0);
@@ -143,6 +208,44 @@ export default function ExpandedPlayer({ onClose, onGoToArtist }: ExpandedPlayer
   };
 
   const playFromList = (song: Song, list: Song[]) => playSong(song, list);
+
+  const displayLines = useMemo<LyricLine[] | null>(() => {
+    if (!lyrics.lines || lyrics.lines.length === 0) return null;
+    if (
+      lyricMode === 'romaji' &&
+      romaji.lines &&
+      romaji.lines.length === lyrics.lines.length
+    ) {
+      return lyrics.lines.map((line, index) => ({
+        time: line.time,
+        text: romaji.lines![index],
+      }));
+    }
+    return lyrics.lines;
+  }, [lyrics.lines, lyricMode, romaji.lines]);
+
+  const renderRomajiToggle = () => (
+    <div className={styles.lyricsTools}>
+      <div className={styles.segmented} role="group" aria-label="Idioma de la letra">
+        <button
+          type="button"
+          className={`${styles.segOption} ${lyricMode === 'japanese' ? styles.segActive : ''}`}
+          onClick={() => setLyricMode('japanese')}
+          aria-pressed={lyricMode === 'japanese'}
+        >
+          日本語
+        </button>
+        <button
+          type="button"
+          className={`${styles.segOption} ${lyricMode === 'romaji' ? styles.segActive : ''}`}
+          onClick={() => setLyricMode('romaji')}
+          aria-pressed={lyricMode === 'romaji'}
+        >
+          Romaji
+        </button>
+      </div>
+    </div>
+  );
 
   return createPortal(
     <div
@@ -315,12 +418,30 @@ export default function ExpandedPlayer({ onClose, onGoToArtist }: ExpandedPlayer
               <p className={styles.empty}>No hay canciones relacionadas.</p>
             ))}
 
-          {tab === 'letra' && (
-            <div className={styles.empty}>
-              <p className={styles.emptyTitle}>Letra próximamente</p>
-              <p>La letra de esta canción aún no está disponible en la versión beta.</p>
-            </div>
-          )}
+          {tab === 'letra' &&
+            (lyrics.status === 'loading' ? (
+              <div className={styles.empty}>
+                <p className={styles.emptyTitle}>Buscando letra…</p>
+                <p>Consultando el servicio de letras sincronizadas.</p>
+              </div>
+            ) : lyrics.lines && lyrics.lines.length > 0 ? (
+              <>
+                {romaji.status === 'ready' && renderRomajiToggle()}
+                <LyricsView lines={displayLines ?? lyrics.lines} audioRef={audioRef} />
+              </>
+            ) : lyrics.plain ? (
+              <>
+                {romaji.status === 'ready' && renderRomajiToggle()}
+                <pre className={styles.plainLyrics}>
+                  {lyricMode === 'romaji' && romaji.plain ? romaji.plain : lyrics.plain}
+                </pre>
+              </>
+            ) : (
+              <div className={styles.empty}>
+                <p className={styles.emptyTitle}>Letra próximamente</p>
+                <p>La letra de esta canción aún no está disponible en la versión beta.</p>
+              </div>
+            ))}
         </div>
       </div>
     </div>,

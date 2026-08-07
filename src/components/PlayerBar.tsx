@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { usePlayer } from '../context/PlayerContext';
+import { artists, songsByArtist } from '../data/songs';
 import {
   ChevronUpIcon,
   CloseIcon,
@@ -31,7 +32,23 @@ export default function PlayerBar({ onGoToArtist, onExpand, embedded = false }: 
     prev,
     seek,
     closePlayer,
+    playSong,
   } = usePlayer();
+
+  const switchArtist = useCallback(
+    (direction: 1 | -1) => {
+      if (!currentSong) return;
+      const currentIndex = artists.indexOf(currentSong.artist);
+      if (currentIndex === -1) return;
+      const nextIndex = (currentIndex + direction + artists.length) % artists.length;
+      const nextArtist = artists[nextIndex];
+      const list = songsByArtist[nextArtist];
+      if (list && list.length > 0) {
+        playSong(list[0], list);
+      }
+    },
+    [currentSong, playSong],
+  );
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -63,6 +80,12 @@ export default function PlayerBar({ onGoToArtist, onExpand, embedded = false }: 
         case 'ArrowRight':
           next();
           break;
+        case 'ArrowUp':
+          switchArtist(-1);
+          break;
+        case 'ArrowDown':
+          switchArtist(1);
+          break;
         case 'e':
         case 'E':
           onExpand();
@@ -76,7 +99,7 @@ export default function PlayerBar({ onGoToArtist, onExpand, embedded = false }: 
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [togglePlay, next, prev, closePlayer, onExpand]);
+  }, [togglePlay, next, prev, closePlayer, onExpand, switchArtist]);
 
   if (!currentSong) {
     return null;
