@@ -94,6 +94,50 @@
   transform: scale(1.03);
 }
 
+.installGuide {
+  position: relative;
+  margin: 0 auto 20px;
+  padding: 12px 14px;
+  width: 180px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-sub);
+}
+
+.guideTitle {
+  margin: 0 0 8px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.guideList {
+  margin: 0;
+  padding-left: 16px;
+}
+
+.guideList li {
+  margin-bottom: 4px;
+}
+
+.guideClose {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: var(--text-sub);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.guideClose:hover {
+  color: var(--text);
+}
+
 /* --- Botón menú móvil (hamburguesa) --- */
 .mobileMenuBtn {
   display: none;

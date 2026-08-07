@@ -35,12 +35,16 @@ export function useInstallPrompt() {
     };
   }, []);
 
-  const install = async () => {
-    if (!deferredPrompt) return;
+  const install = async (): Promise<boolean> => {
+    if (!deferredPrompt) return false;
     await deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
+    const choice = await deferredPrompt.userChoice;
     setDeferredPrompt(null);
+    if (choice.outcome === 'accepted') {
+      setIsInstalled(true);
+    }
+    return true;
   };
 
-  return { canInstall: Boolean(deferredPrompt) && !isInstalled, install };
+  return { isInstalled, install };
 }

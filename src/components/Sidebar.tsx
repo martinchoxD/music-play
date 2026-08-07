@@ -33,8 +33,9 @@ interface SidebarProps {
 
 export default function Sidebar({ currentView, onNavigate }: SidebarProps) {
   const { playRandom, randomMode } = usePlayer();
-  const { canInstall, install } = useInstallPrompt();
+  const { isInstalled, install } = useInstallPrompt();
   const [isOpen, setIsOpen] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
 
   const navigate = (view: View) => {
     onNavigate(view);
@@ -102,18 +103,46 @@ export default function Sidebar({ currentView, onNavigate }: SidebarProps) {
           </li>
         </ul>
 
-        {canInstall && (
-          <button
-            type="button"
-            className={styles.installBtn}
-            onClick={() => {
-              void install();
-              setIsOpen(false);
-            }}
-          >
-            <span className={styles.icon} aria-hidden="true">📲</span>
-            <span className={styles.label}>Descargar app</span>
-          </button>
+        {!isInstalled && (
+          <>
+            <button
+              type="button"
+              className={styles.installBtn}
+              onClick={async () => {
+                const prompted = await install();
+                setIsOpen(false);
+                setShowGuide(!prompted);
+              }}
+            >
+              <span className={styles.icon} aria-hidden="true">📲</span>
+              <span className={styles.label}>Descargar app</span>
+            </button>
+
+            {showGuide && (
+              <div className={styles.installGuide}>
+                <button
+                  type="button"
+                  className={styles.guideClose}
+                  onClick={() => setShowGuide(false)}
+                  aria-label="Cerrar ayuda"
+                >
+                  ✕
+                </button>
+                <p className={styles.guideTitle}>No se pudo abrir el diálogo de instalación.</p>
+                <ul className={styles.guideList}>
+                  <li>
+                    <strong>Chrome / Edge:</strong> usá el icono de instalación en la barra de
+                    direcciones (o ⋮ → «Instalar app»).
+                  </li>
+                  <li>
+                    <strong>iOS (Safari):</strong> botón Compartir → «Agregar a pantalla de
+                    inicio».
+                  </li>
+                  <li>Debe estar abierto en <strong>localhost</strong> o una URL <strong>https</strong>.</li>
+                </ul>
+              </div>
+            )}
+          </>
         )}
       </nav>
     </>
