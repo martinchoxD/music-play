@@ -9,7 +9,7 @@
 }
 
 .logo {
-  padding: 36px 20px 24px;
+  padding: 40px 20px 20px;
   font-size: 24px;
   font-weight: 800;
   color: var(--accent);
@@ -20,67 +20,122 @@
 .nav {
   list-style: none;
   margin: 0;
-  padding: 0 20px;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  align-items: center;
   flex: 1;
 }
 
-.footer {
-  padding: 16px 20px 24px;
-  border-top: 1px solid var(--border);
+.navItem,
+.navItemDisabled {
+  width: 180px;
+  padding: 12px 15px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  color: var(--text-sub);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 15px;
+  text-align: left;
+  transition:
+    color 0.25s,
+    background 0.25s;
 }
 
 .navItem {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  width: 100%;
-  padding: 12px 16px;
   background: transparent;
   border: none;
-  border-radius: 10px;
-  color: var(--text-sub);
-  font-size: 15px;
-  font-weight: 600;
-  text-align: left;
-  transition:
-    color 0.2s,
-    background 0.2s;
+  cursor: pointer;
 }
 
-.navItem:hover {
+.navItem:hover,
+.active {
   color: var(--accent);
   background: rgba(255, 255, 255, 0.05);
 }
 
-.active,
-.active:hover {
-  color: var(--accent);
+.navItemDisabled {
+  cursor: default;
+  opacity: 0.75;
 }
 
-@media (max-width: 900px) {
+.icon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* --- Botón menú móvil (hamburguesa) --- */
+.mobileMenuBtn {
+  display: none;
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  width: 45px;
+  height: 45px;
+  background: var(--accent);
+  border: none;
+  border-radius: 50%;
+  z-index: 1100;
+  cursor: pointer;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s;
+}
+
+.mobileMenuBtn.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.mobileMenuBtn span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: #fff;
+  border-radius: 1px;
+}
+
+/* --- Botón cerrar sidebar móvil --- */
+.closeBtn {
+  display: none;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+@media (max-width: 768px) {
+  .mobileMenuBtn {
+    display: flex;
+  }
+
+  .closeBtn {
+    display: block;
+  }
+
   .sidebar {
-    width: 64px;
+    transform: translateX(-100%);
+    width: 280px;
+    transition: transform 0.3s ease;
   }
 
-  .logo {
-    font-size: 14px;
-    padding: 24px 8px 16px;
-  }
-
-  .nav,
-  .footer {
-    padding: 0 8px;
-  }
-
-  .navItem {
-    justify-content: center;
-    padding: 12px;
-  }
-
-  .label {
-    display: none;
+  .sidebar.open {
+    transform: translateX(0);
   }
 }

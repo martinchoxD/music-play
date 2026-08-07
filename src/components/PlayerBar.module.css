@@ -46,6 +46,21 @@
   color: var(--text-sub);
 }
 
+.artistBtn {
+  font-size: 12px;
+  color: var(--text-sub);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.artistBtn:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
 .close {
   background: transparent;
   border: none;

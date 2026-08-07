@@ -3,7 +3,11 @@ import { CloseIcon, NextIcon, PauseIcon, PlayIcon, PrevIcon } from './icons';
 import { formatTime } from '../utils/formatTime';
 import styles from './PlayerBar.module.css';
 
-export default function PlayerBar() {
+interface PlayerBarProps {
+  onGoToArtist: (artist: string) => void;
+}
+
+export default function PlayerBar({ onGoToArtist }: PlayerBarProps) {
   const {
     currentSong,
     isPlaying,
@@ -39,7 +43,14 @@ export default function PlayerBar() {
         />
         <div className={styles.meta}>
           <p className={styles.title}>{currentSong.title}</p>
-          <p className={styles.artist}>{currentSong.artist}</p>
+          <button
+            type="button"
+            className={styles.artistBtn}
+            onClick={() => onGoToArtist(currentSong.artist)}
+            title={`Ver perfil de ${currentSong.artist}`}
+          >
+            {currentSong.artist}
+          </button>
         </div>
         <button
           type="button"

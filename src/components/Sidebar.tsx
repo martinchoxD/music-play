@@ -1,64 +1,105 @@
-import type { ComponentType } from 'react';
+import { useState } from 'react';
+import type { View } from '../types/view';
 import { usePlayer } from '../context/PlayerContext';
-import { HomeIcon, MusicIcon, ShuffleIcon, type IconProps } from './icons';
 import styles from './Sidebar.module.css';
 
 interface NavItem {
   id: string;
   label: string;
-  icon: ComponentType<IconProps>;
-  target: string;
+  icon: string;
+  view?: View;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: 'inicio', label: 'Inicio', icon: HomeIcon, target: 'top' },
-  { id: 'eve', label: 'Eve', icon: MusicIcon, target: 'artista-eve' },
-  { id: 'natori', label: 'natori', icon: MusicIcon, target: 'artista-natori' },
-  { id: 'ado', label: 'Ado', icon: MusicIcon, target: 'artista-ado' },
-  { id: 'yoasobi', label: 'YOASOBI', icon: MusicIcon, target: 'artista-yoasobi' },
+  { id: 'inicio', label: 'Inicio', icon: '🏠', view: 'inicio' },
+  { id: 'playlists', label: 'Playlists', icon: '🎶', view: 'playlists' },
+  { id: 'noticias', label: 'Noticias', icon: '📰', view: 'noticias' },
+  { id: 'artistas', label: 'Artistas', icon: '🎙️', view: 'artistas' },
 ];
 
-export default function Sidebar() {
-  const { playRandom, randomMode } = usePlayer();
+const NAV_ID_FOR_VIEW: Record<View, string> = {
+  inicio: 'inicio',
+  playlists: 'playlists',
+  noticias: 'noticias',
+  artistas: 'artistas',
+  'artista-detalle': 'artistas',
+};
 
-  const scrollTo = (target: string) => {
-    if (target === 'top') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-    document.getElementById(target)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+interface SidebarProps {
+  currentView: View;
+  onNavigate: (view: View) => void;
+}
+
+export default function Sidebar({ currentView, onNavigate }: SidebarProps) {
+  const { playRandom, randomMode } = usePlayer();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const navigate = (view: View) => {
+    onNavigate(view);
+    setIsOpen(false);
   };
 
   return (
-    <nav className={styles.sidebar} aria-label="Navegación principal">
-      <div className={styles.logo}>MusicPlay</div>
+    <>
+      <button
+        type="button"
+        className={`${styles.mobileMenuBtn} ${isOpen ? styles.hidden : ''}`}
+        onClick={() => setIsOpen(true)}
+        aria-label="Abrir menú"
+      >
+        <span />
+        <span />
+        <span />
+      </button>
 
-      <ul className={styles.nav}>
-        {NAV_ITEMS.map((item) => (
-          <li key={item.id}>
-            <button
-              type="button"
-              className={styles.navItem}
-              onClick={() => scrollTo(item.target)}
-            >
-              <item.icon />
-              <span className={styles.label}>{item.label}</span>
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      <div className={styles.footer}>
+      <nav className={`${styles.sidebar} ${isOpen ? styles.open : ''}`} aria-label="Navegación principal">
         <button
           type="button"
-          className={`${styles.navItem} ${randomMode ? styles.active : ''}`}
-          onClick={playRandom}
-          aria-pressed={randomMode}
+          className={styles.closeBtn}
+          onClick={() => setIsOpen(false)}
+          aria-label="Cerrar menú"
         >
-          <ShuffleIcon />
-          <span className={styles.label}>Aleatorio</span>
+          ✕
         </button>
-      </div>
-    </nav>
+
+        <div className={styles.logo}>MusicPlay</div>
+
+        <ul className={styles.nav}>
+          {NAV_ITEMS.map((item) =>
+            item.view ? (
+              <li key={item.id}>
+                <button
+                  type="button"
+                  className={`${styles.navItem} ${NAV_ID_FOR_VIEW[currentView] === item.id ? styles.active : ''}`}
+                  onClick={() => navigate(item.view!)}
+                  aria-current={NAV_ID_FOR_VIEW[currentView] === item.id ? 'page' : undefined}
+                >
+                  <span className={styles.icon} aria-hidden="true">{item.icon}</span>
+                  <span className={styles.label}>{item.label}</span>
+                </button>
+              </li>
+            ) : (
+              <li key={item.id}>
+                <span className={styles.navItemDisabled} title="Próximamente">
+                  <span className={styles.icon} aria-hidden="true">{item.icon}</span>
+                  <span className={styles.label}>{item.label}</span>
+                </span>
+              </li>
+            ),
+          )}
+          <li>
+            <button
+              type="button"
+              className={`${styles.navItem} ${randomMode ? styles.active : ''}`}
+              onClick={playRandom}
+              aria-pressed={randomMode}
+            >
+              <span className={styles.icon} aria-hidden="true">🎲</span>
+              <span className={styles.label}>Aleatorio</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </>
   );
 }

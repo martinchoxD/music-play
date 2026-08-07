@@ -13,7 +13,7 @@ export default function SearchBar({ value, onChange }: SearchBarProps) {
       <input
         className={styles.input}
         type="text"
-        placeholder="Buscar artista o canción..."
+        placeholder="Buscar artistas o canciones"
         value={value}
         onChange={(event) => onChange(event.target.value)}
         aria-label="Buscar artista o canción"

@@ -1,0 +1,190 @@
+.header {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  background: linear-gradient(180deg, rgba(29, 185, 84, 0.1) 0%, rgba(5, 5, 5, 0) 100%);
+  padding: 30px;
+  border-radius: 16px;
+  margin-bottom: 40px;
+}
+
+.profileImg {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.info {
+  min-width: 0;
+}
+
+.name {
+  font-size: 48px;
+  margin: 0 0 10px 0;
+  font-weight: 800;
+}
+
+.listeners {
+  font-size: 14px;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.bio {
+  color: #cbcbcb;
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0;
+}
+
+.sectionTitle {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent);
+  margin: 40px 0 15px;
+  font-weight: 700;
+}
+
+.songListWrap {
+  width: 100%;
+}
+
+.songList {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 40px;
+}
+
+.songList tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.songList tr:hover,
+.playing {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.songList .playing .trackTitle {
+  color: var(--accent);
+}
+
+.songList td {
+  padding: 12px 15px;
+  font-size: 14px;
+}
+
+.trackImg {
+  width: 50px;
+  padding: 6px 0 !important;
+}
+
+.trackImgContainer {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.trackImgContainer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.trackBars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 8px;
+}
+
+.trackTitle {
+  font-weight: 600;
+}
+
+.trackArtist {
+  color: var(--text-sub);
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .profileImg {
+    width: 140px;
+    height: 140px;
+  }
+
+  .name {
+    font-size: 32px;
+  }
+
+  /* Las filas de canciones pasan a ser tarjetas con scroll horizontal */
+  .songList tbody {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 10px 0 20px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) var(--bg-elevated);
+  }
+
+  .songList tr {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex-shrink: 0;
+    width: 140px;
+    background: var(--bg-surface);
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.02);
+  }
+
+  .songList td {
+    display: block;
+    padding: 0;
+    width: 100%;
+  }
+
+  .trackImg {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .trackImgContainer {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .trackTitle {
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .trackArtist {
+    text-align: center;
+    font-size: 11px;
+    margin-top: 4px;
+  }
+}

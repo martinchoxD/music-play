@@ -135,6 +135,41 @@ export function useAudioPlayer(allSongs: Song[]) {
     };
   }, [next]);
 
+  useEffect(() => {
+    if (!('mediaSession' in navigator)) return;
+
+    if (currentSong) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: currentSong.title,
+        artist: currentSong.artist,
+        artwork: [{ src: currentSong.coverUrl, sizes: '512x512', type: 'image/jpeg' }],
+      });
+    } else {
+      navigator.mediaSession.metadata = null;
+    }
+  }, [currentSong]);
+
+  useEffect(() => {
+    if (!('mediaSession' in navigator)) return;
+
+    const handlers: Array<[MediaSessionAction, MediaSessionActionHandler | null]> = [
+      ['play', togglePlay],
+      ['pause', togglePlay],
+      ['previoustrack', prev],
+      ['nexttrack', next],
+    ];
+
+    for (const [action, handler] of handlers) {
+      navigator.mediaSession.setActionHandler(action, handler);
+    }
+
+    return () => {
+      for (const [action] of handlers) {
+        navigator.mediaSession.setActionHandler(action, null);
+      }
+    };
+  }, [togglePlay, prev, next]);
+
   return useMemo(
     () => ({
       audioRef,

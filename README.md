@@ -11,9 +11,14 @@ Reproductor de música web inspirado en Spotify, construido con **React**, **Typ
 - **Reproducción continua por artista**: al elegir una canción, se encola la sección completa (siguiente/anterior/auto-siguiente).
 - **Modo aleatorio**: reproduce canciones al azar de todo el catálogo desde la barra lateral.
 - **Búsqueda en tiempo real**: filtra por título o artista, con mensaje de "sin resultados".
-- **Navegación por artistas**: accesos rápidos en la barra lateral con scroll suave.
+- **Navegación por vistas**: Inicio (con búsqueda), Playlists, Noticias, Artistas y perfil de artista, gestionadas desde la barra lateral.
+- **Playlists propias**: creá tus playlists, agregá/quitá canciones, renombrá y eliminá. Se guardan en el `localStorage` del navegador (cada usuario conserva las suyas).
+- **Centro de novedades**: noticias del proyecto con etiquetas (update/dev/info) y fecha relativa ("hace Xd Xh").
+- **Perfil de artista**: portada, oyentes, bio y tabla de canciones del artista con reproducción por sección.
+- **Navegación por artistas**: accesos rápidos en la barra lateral con scroll suave y click al artista para abrir su perfil.
+- **Media Session**: controles de reproducción desde el sistema (pantalla de bloqueo, auriculares).
 - **Barra de progreso interactiva** con tiempos de la canción.
-- **Diseño responsive**: barra lateral compacta y reproductor adaptado a móviles.
+- **Diseño responsive**: sidebar tipo drawer con menú hamburguesa en móviles (≤768px), tablas con scroll horizontal.
 - **Accesibilidad**: elementos con `aria-label`, `aria-pressed` y navegación por teclado en botones.
 - **Indicador visual** de la canción en reproducción (barras ecualizadoras animadas).
 
@@ -31,22 +36,27 @@ Reproductor de música web inspirado en Spotify, construido con **React**, **Typ
 ```
 music/
 ├── public/
-│   ├── favicon.svg          # Ícono del sitio
-│   └── audio/               # Archivos .mp3 (ignorados por git)
+│   └── favicon.svg          # Ícono del sitio
 ├── src/
-│   ├── components/          # Sidebar, PlayerBar, SongCard, SearchBar, etc.
-│   │   └── *.module.css     # Estilos por componente
+│   ├── components/          # Sidebar, PlayerBar, SongCard, HomeView, PlaylistsView, etc.
+│   │   └── *.module.css     # Estilos por componente (responsive)
 │   ├── context/
 │   │   └── PlayerContext.tsx  # Estado global del reproductor
 │   ├── data/
-│   │   └── songs.ts         # Catálogo de canciones
+│   │   ├── songs.ts         # Catálogo de canciones
+│   │   ├── artists.ts       # Info de artistas (bio, oyentes, portada)
+│   │   └── news.ts          # Noticias del proyecto
 │   ├── hooks/
-│   │   └── useAudioPlayer.ts  # Lógica de reproducción (cola, random, seek)
+│   │   ├── useAudioPlayer.ts  # Lógica de reproducción (cola, random, seek, Media Session)
+│   │   └── useLocalStorage.ts # Persistencia en localStorage (playlists)
 │   ├── types/
-│   │   └── song.ts          # Tipos del dominio
+│   │   ├── song.ts          # Tipos del dominio
+│   │   ├── playlist.ts      # Tipo Playlist (id, nombre, canciones)
+│   │   └── view.ts          # Vistas de la app (inicio, playlists, noticias, artistas, detalle)
 │   ├── utils/
-│   │   └── formatTime.ts
-│   ├── App.tsx
+│   │   ├── formatTime.ts
+│   │   └── newsTime.ts      # Fechas relativas y formateo de noticias
+│   ├── App.tsx              # Navegación entre vistas
 │   ├── config.ts            # URL base del audio
 │   └── main.tsx
 ├── index.html

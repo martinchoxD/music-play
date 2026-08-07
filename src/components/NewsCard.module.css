@@ -1,0 +1,125 @@
+.card {
+  background: linear-gradient(145deg, #161616, #0e0e0e);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-left: 4px solid #333;
+  border-radius: 12px;
+  padding: 24px 28px;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition:
+    transform 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+    border-color 0.3s,
+    box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-2px) translateX(4px);
+  box-shadow: 0 6px 26px rgba(0, 0, 0, 0.3);
+}
+
+.cardUpdate {
+  border-left-color: var(--accent);
+}
+
+.cardDev {
+  border-left-color: #ffc107;
+}
+
+.cardInfo {
+  border-left-color: #007bff;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 6px;
+  letter-spacing: 1px;
+}
+
+.tagUpdate {
+  background: rgba(29, 185, 84, 0.12);
+  color: var(--accent);
+}
+
+.tagDev {
+  background: rgba(255, 193, 7, 0.12);
+  color: #ffc107;
+}
+
+.tagInfo {
+  background: rgba(0, 123, 255, 0.12);
+  color: #007bff;
+}
+
+.timer {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-sub);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.timer::before {
+  content: '⏳';
+  font-size: 10px;
+}
+
+.title {
+  margin: 0 0 10px 0;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.text {
+  margin: 0;
+  color: #cbcbcb;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.footer {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .timer {
+    align-self: flex-start;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .card {
+    padding: 18px 20px;
+  }
+}

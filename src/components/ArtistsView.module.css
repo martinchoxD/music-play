@@ -1,0 +1,73 @@
+.title {
+  font-size: 30px;
+  font-weight: 800;
+  margin: 30px 0;
+  letter-spacing: -0.5px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background: var(--bg-surface);
+  padding: 20px;
+  border-radius: 14px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  transition:
+    background 0.3s,
+    transform 0.3s;
+}
+
+.card:hover {
+  background: #1c1c1c;
+  transform: translateY(-5px);
+}
+
+.img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 15px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.name {
+  margin: 0 0 5px 0;
+  font-size: 18px;
+}
+
+.listeners {
+  color: var(--text-sub);
+  font-size: 13px;
+  margin: 0 0 15px 0;
+}
+
+.btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    background 0.2s;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+  background: var(--accent-hover);
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 22px;
+  }
+}
