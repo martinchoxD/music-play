@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useEffect } from 'react';
 import { usePlayer } from '../context/PlayerContext';
 import {
   ChevronUpIcon,
@@ -10,16 +9,16 @@ import {
   PrevIcon,
   ShuffleIcon,
 } from './icons';
-import ExpandedPlayer from './ExpandedPlayer';
 import { formatTime } from '../utils/formatTime';
 import styles from './PlayerBar.module.css';
 
 interface PlayerBarProps {
   onGoToArtist: (artist: string) => void;
+  onExpand: () => void;
   embedded?: boolean;
 }
 
-export default function PlayerBar({ onGoToArtist, embedded = false }: PlayerBarProps) {
+export default function PlayerBar({ onGoToArtist, onExpand, embedded = false }: PlayerBarProps) {
   const {
     currentSong,
     isPlaying,
@@ -33,7 +32,51 @@ export default function PlayerBar({ onGoToArtist, embedded = false }: PlayerBarP
     seek,
     closePlayer,
   } = usePlayer();
-  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      const tag = target?.tagName;
+      const typing =
+        tag === 'INPUT' ||
+        tag === 'TEXTAREA' ||
+        tag === 'SELECT' ||
+        target?.isContentEditable;
+      if (typing || event.metaKey || event.ctrlKey || event.altKey) {
+        return;
+      }
+
+      if (event.code === 'Space') {
+        event.preventDefault();
+        togglePlay();
+        return;
+      }
+
+      if (tag === 'BUTTON' || tag === 'A' || target?.getAttribute('role') === 'button') {
+        return;
+      }
+
+      switch (event.key) {
+        case 'ArrowLeft':
+          prev();
+          break;
+        case 'ArrowRight':
+          next();
+          break;
+        case 'e':
+        case 'E':
+          onExpand();
+          break;
+        case 'c':
+        case 'C':
+          closePlayer();
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [togglePlay, next, prev, closePlayer, onExpand]);
 
   if (!currentSong) {
     return null;
@@ -47,11 +90,10 @@ export default function PlayerBar({ onGoToArtist, embedded = false }: PlayerBarP
   };
 
   return (
-    <>
-      <section
-        className={`${styles.player} ${embedded ? styles.embedded : ''}`}
-        aria-label="Reproductor"
-      >
+    <section
+      className={`${styles.player} ${embedded ? styles.embedded : ''}`}
+      aria-label="Reproductor"
+    >
       <button
         type="button"
         className={styles.close}
@@ -68,11 +110,11 @@ export default function PlayerBar({ onGoToArtist, embedded = false }: PlayerBarP
         referrerPolicy="no-referrer"
         role="button"
         tabIndex={0}
-        onClick={() => setExpanded(true)}
+        onClick={onExpand}
         onKeyDown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
-            setExpanded(true);
+            onExpand();
           }
         }}
         aria-label="Expandir reproductor"
@@ -132,22 +174,12 @@ export default function PlayerBar({ onGoToArtist, embedded = false }: PlayerBarP
         <button
           type="button"
           className={styles.iconBtn}
-          onClick={() => setExpanded(true)}
+          onClick={onExpand}
           aria-label="Expandir reproductor"
         >
           <ChevronUpIcon size={16} />
         </button>
       </div>
-      </section>
-
-      {expanded &&
-        createPortal(
-          <ExpandedPlayer
-            onClose={() => setExpanded(false)}
-            onGoToArtist={onGoToArtist}
-          />,
-          document.body,
-        )}
-    </>
+    </section>
   );
 }

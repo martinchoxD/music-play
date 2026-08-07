@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { View } from '../types/view';
 import { usePlayer } from '../context/PlayerContext';
@@ -45,15 +45,102 @@ export default function Sidebar({
   const { playRandom, randomMode } = usePlayer();
   const { isInstalled, install } = useInstallPrompt();
   const [showGuide, setShowGuide] = useState(false);
+  const sidebarRef = useRef<HTMLElement | null>(null);
+  const [dragX, setDragX] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const dragXRef = useRef(0);
+  const closingRef = useRef(false);
+
+  dragXRef.current = dragX;
 
   const navigate = (view: View) => {
     onNavigate(view);
     onClose();
   };
 
+  useEffect(() => {
+    if (!window.matchMedia('(max-width: 768px)').matches) return;
+    const sidebar = sidebarRef.current;
+    if (!sidebar) return;
+
+    const drag = { startX: 0, startY: 0, active: false };
+
+    const onTouchStart = (event: TouchEvent) => {
+      if (closingRef.current) return;
+      const touch = event.touches[0];
+      drag.startX = touch.clientX;
+      drag.startY = touch.clientY;
+      drag.active = false;
+    };
+
+    const onTouchMove = (event: TouchEvent) => {
+      if (closingRef.current) return;
+      const touch = event.touches[0];
+      const dx = touch.clientX - drag.startX;
+      const dy = touch.clientY - drag.startY;
+      if (!drag.active) {
+        if (dx < 0 && -dx > 20 && -dx > Math.abs(dy) * 1.2) {
+          drag.active = true;
+        } else {
+          return;
+        }
+      }
+      event.preventDefault();
+      setDragging(true);
+      setDragX(Math.max(-280, Math.min(0, dx)));
+    };
+
+    const closeSidebar = () => {
+      if (closingRef.current) return;
+      const width = sidebarRef.current?.getBoundingClientRect().width ?? 280;
+      closingRef.current = true;
+      setDragging(false);
+      setDragX(-width);
+      window.setTimeout(() => {
+        closingRef.current = false;
+        onClose();
+      }, 280);
+    };
+
+    const onTouchEnd = () => {
+      if (closingRef.current) return;
+      if (drag.active && dragXRef.current < -100) {
+        closeSidebar();
+      } else {
+        setDragging(false);
+        setDragX(0);
+      }
+      drag.active = false;
+    };
+
+    sidebar.addEventListener('touchstart', onTouchStart, { passive: true });
+    sidebar.addEventListener('touchmove', onTouchMove, { passive: false });
+    sidebar.addEventListener('touchend', onTouchEnd, { passive: true });
+    sidebar.addEventListener('touchcancel', onTouchEnd, { passive: true });
+
+    return () => {
+      sidebar.removeEventListener('touchstart', onTouchStart);
+      sidebar.removeEventListener('touchmove', onTouchMove);
+      sidebar.removeEventListener('touchend', onTouchEnd);
+      sidebar.removeEventListener('touchcancel', onTouchEnd);
+    };
+  }, [onClose]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setDragX(0);
+      setDragging(false);
+    }
+  }, [isOpen]);
+
   return (
     <nav
+      ref={sidebarRef}
       className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}
+      style={{
+        transform: dragging || dragX !== 0 ? `translateX(${dragX}px)` : undefined,
+        transition: dragging ? 'none' : undefined,
+      }}
       aria-label="Navegación principal"
     >
       <button

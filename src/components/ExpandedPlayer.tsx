@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { Song } from '../types/song';
 import { usePlayer } from '../context/PlayerContext';
@@ -44,6 +44,88 @@ export default function ExpandedPlayer({ onClose, onGoToArtist }: ExpandedPlayer
     playSong,
   } = usePlayer();
   const [tab, setTab] = useState<TabId>('siguientes');
+  const [dragX, setDragX] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const dragXRef = useRef(0);
+  const closingRef = useRef(false);
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+
+  dragXRef.current = dragX;
+
+  const beginClose = useCallback(() => {
+    if (closingRef.current) return;
+    closingRef.current = true;
+    setDragging(false);
+    setDragX(window.innerWidth);
+    window.setTimeout(onClose, 300);
+  }, [onClose]);
+
+  useEffect(() => {
+    const panel = panelRef.current;
+    if (!panel) return;
+
+    const drag = { startX: 0, startY: 0, active: false, fromContent: false };
+
+    const onTouchStart = (event: TouchEvent) => {
+      if (closingRef.current) return;
+      const touch = event.touches[0];
+      drag.startX = touch.clientX;
+      drag.startY = touch.clientY;
+      drag.active = false;
+      drag.fromContent = contentRef.current?.contains(event.target as Node) ?? false;
+    };
+
+    const onTouchMove = (event: TouchEvent) => {
+      if (closingRef.current) return;
+      const touch = event.touches[0];
+      const dx = touch.clientX - drag.startX;
+      const dy = touch.clientY - drag.startY;
+      if (!drag.active) {
+        if (dx > 0 && dx > 30 && dx > Math.abs(dy) * 1.2 && !drag.fromContent) {
+          drag.active = true;
+        } else {
+          return;
+        }
+      }
+      event.preventDefault();
+      setDragging(true);
+      setDragX(Math.max(0, dx));
+    };
+
+    const onTouchEnd = () => {
+      if (closingRef.current) return;
+      if (drag.active && dragXRef.current > 100) {
+        beginClose();
+      } else {
+        setDragging(false);
+        setDragX(0);
+      }
+      drag.active = false;
+    };
+
+    panel.addEventListener('touchstart', onTouchStart, { passive: true });
+    panel.addEventListener('touchmove', onTouchMove, { passive: false });
+    panel.addEventListener('touchend', onTouchEnd, { passive: true });
+    panel.addEventListener('touchcancel', onTouchEnd, { passive: true });
+
+    return () => {
+      panel.removeEventListener('touchstart', onTouchStart);
+      panel.removeEventListener('touchmove', onTouchMove);
+      panel.removeEventListener('touchend', onTouchEnd);
+      panel.removeEventListener('touchcancel', onTouchEnd);
+    };
+  }, [beginClose]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [onClose]);
 
   if (!currentSong) {
     return null;
@@ -74,7 +156,14 @@ export default function ExpandedPlayer({ onClose, onGoToArtist }: ExpandedPlayer
         }
       }}
     >
-      <div className={styles.panel}>
+      <div
+        className={styles.panel}
+        ref={panelRef}
+        style={{
+          transform: `translateX(${dragX}px)`,
+          transition: dragging ? 'none' : 'transform 0.25s ease',
+        }}
+      >
         <header className={styles.header}>
           <span className={styles.heading}>
             Reproductor <span className={styles.badge}>Beta</span>
@@ -166,7 +255,7 @@ export default function ExpandedPlayer({ onClose, onGoToArtist }: ExpandedPlayer
           ))}
         </nav>
 
-        <div className={styles.content}>
+        <div className={styles.content} ref={contentRef}>
           {tab === 'siguientes' &&
             (upcoming.length > 0 ? (
               <ul className={styles.songList}>
