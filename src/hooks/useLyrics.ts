@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Song } from '../types/song';
 import { lyricsBySong, parseLrc, type LyricLine } from '../data/lyrics';
+import { lyricOffsetsBySong } from '../data/lyricOffsets';
 
 export type LyricsStatus = 'loading' | 'ready' | 'none';
 
@@ -50,11 +51,20 @@ interface LrcLibResult {
   plainLyrics: string | null;
 }
 
+function shiftLines(lines: LyricLine[], offset: number): LyricLine[] {
+  if (!offset) return lines;
+  return lines.map((line) => ({
+    time: Math.max(0, line.time + offset),
+    text: line.text,
+  }));
+}
+
 export function useLyrics(song: Song | null, duration: number): LyricsResult {
   const [result, setResult] = useState<LyricsResult>(() => {
     const bundled = song ? lyricsBySong[song.id] : undefined;
     if (bundled && bundled.length > 0) {
-      return { lines: bundled, plain: null, status: 'ready' };
+      const offset = song ? lyricOffsetsBySong[song.id] ?? 0 : 0;
+      return { lines: shiftLines(bundled, offset), plain: null, status: 'ready' };
     }
     return { lines: null, plain: null, status: 'loading' };
   });
@@ -65,15 +75,16 @@ export function useLyrics(song: Song | null, duration: number): LyricsResult {
       return;
     }
 
+    const offset = lyricOffsetsBySong[song.id] ?? 0;
     const bundled = lyricsBySong[song.id];
     if (bundled && bundled.length > 0) {
-      setResult({ lines: bundled, plain: null, status: 'ready' });
+      setResult({ lines: shiftLines(bundled, offset), plain: null, status: 'ready' });
       return;
     }
 
     const cached = readCache(song.id);
     if (cached) {
-      const lines = cached.synced ? parseLrc(cached.synced) : null;
+      const lines = cached.synced ? shiftLines(parseLrc(cached.synced), offset) : null;
       setResult({
         lines,
         plain: cached.plain,
@@ -107,7 +118,7 @@ export function useLyrics(song: Song | null, duration: number): LyricsResult {
           ? syncedItem?.plainLyrics ?? null
           : pool[0]?.plainLyrics ?? null;
         writeCache(song.id, { synced, plain });
-        const lines = synced ? parseLrc(synced) : null;
+        const lines = synced ? shiftLines(parseLrc(synced), offset) : null;
         setResult({ lines, plain, status: lines || plain ? 'ready' : 'none' });
       })
       .catch(() => {
