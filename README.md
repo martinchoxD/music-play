@@ -1,0 +1,126 @@
+# MusicPlay 🎧
+
+Reproductor de música web inspirado en Spotify, construido con **React**, **TypeScript** y **Vite**. Listado de canciones por artista, búsqueda en tiempo real, cola de reproducción por sección, modo aleatorio y reproductor fijo en la parte inferior.
+
+> Demo en Vercel: *(agregá tu URL cuando la tengas, p. ej. `https://tu-proyecto.vercel.app`)*
+
+---
+
+## ✨ Características
+
+- **Reproducción continua por artista**: al elegir una canción, se encola la sección completa (siguiente/anterior/auto-siguiente).
+- **Modo aleatorio**: reproduce canciones al azar de todo el catálogo desde la barra lateral.
+- **Búsqueda en tiempo real**: filtra por título o artista, con mensaje de "sin resultados".
+- **Navegación por artistas**: accesos rápidos en la barra lateral con scroll suave.
+- **Barra de progreso interactiva** con tiempos de la canción.
+- **Diseño responsive**: barra lateral compacta y reproductor adaptado a móviles.
+- **Accesibilidad**: elementos con `aria-label`, `aria-pressed` y navegación por teclado en botones.
+- **Indicador visual** de la canción en reproducción (barras ecualizadoras animadas).
+
+## 🛠️ Stack
+
+| Tecnología | Uso |
+| --- | --- |
+| [React 19](https://react.dev/) | Librería de UI |
+| [TypeScript](https://www.typescriptlang.org/) | Tipado estático |
+| [Vite 6](https://vite.dev/) | Bundler y dev server |
+| [CSS Modules](https://github.com/css-modules/css-modules) | Estilos por componente, responsive |
+
+## 📁 Estructura del proyecto
+
+```
+music/
+├── public/
+│   ├── favicon.svg          # Ícono del sitio
+│   └── audio/               # Archivos .mp3 (ignorados por git)
+├── src/
+│   ├── components/          # Sidebar, PlayerBar, SongCard, SearchBar, etc.
+│   │   └── *.module.css     # Estilos por componente
+│   ├── context/
+│   │   └── PlayerContext.tsx  # Estado global del reproductor
+│   ├── data/
+│   │   └── songs.ts         # Catálogo de canciones
+│   ├── hooks/
+│   │   └── useAudioPlayer.ts  # Lógica de reproducción (cola, random, seek)
+│   ├── types/
+│   │   └── song.ts          # Tipos del dominio
+│   ├── utils/
+│   │   └── formatTime.ts
+│   ├── App.tsx
+│   ├── config.ts            # URL base del audio
+│   └── main.tsx
+├── index.html
+└── package.json
+```
+
+## 🚀 Puesta en marcha
+
+Requisito: **Node.js 18+**.
+
+```bash
+# Instalar dependencias
+npm install
+
+# Servidor de desarrollo (http://localhost:5173)
+npm run dev
+
+# Build de producción
+npm run build
+
+# Previsualizar el build
+npm run preview
+
+# Verificación de tipos
+npm run typecheck
+```
+
+## 🔊 Configuración del audio
+
+Las canciones quedan **fuera del repositorio** por peso y derechos de autor. Tenés dos opciones:
+
+**Opción A — archivos locales (solo desarrollo):**
+
+1. Creá la carpeta `public/audio/`.
+2. Copiá allí los archivos `.mp3` (con los nombres indicados en `src/data/songs.ts`).
+3. Listo. `src/config.ts` ya apunta a `/audio`.
+
+**Opción B — Cloudinary (recomendado para producción):**
+
+1. Creá una cuenta gratuita en [cloudinary.com](https://cloudinary.com).
+2. Subí los `.mp3` con el script `uploadFiles.js`. Definí primero las variables de entorno (nunca se comitean):
+
+```bash
+# Windows (PowerShell)
+$env:CLOUDINARY_CLOUD_NAME = "tu_cloud_name"
+$env:CLOUDINARY_API_KEY = "tu_api_key"
+$env:CLOUDINARY_API_SECRET = "tu_api_secret"
+node uploadFiles.js
+```
+
+3. El script sube cada archivo con `public_id` = nombre y carpeta `mis_audios`. La app ya apunta a tu cuenta en `src/config.ts`:
+
+```ts
+export const audioBaseUrl = 'https://res.cloudinary.com/<TU_CLOUD_NAME>/video/upload/mis_audios';
+```
+
+> Las URLs de entrega son públicas y no requieren credenciales en la app.
+> **Importante:** Cloudinary puede guardar algunos `.mp3` como contenedor `.mp4`; en `src/data/songs.ts` la extensión de `audioFile` debe coincidir (p. ej. `dramaturgy.mp4`).
+> La carpeta `public/audio/` está en `.gitignore`, así que nunca se sube a GitHub.
+
+## ▲ Deploy en Vercel
+
+1. Subí el proyecto a un repositorio de GitHub.
+2. En [vercel.com](https://vercel.com) → **New Project** → importá el repo.
+3. Vercel detecta **Vite** automáticamente (framework preset: *Vite*). No hace falta configuración.
+4. Deploy. En *Settings → Domains* podés asignarle un dominio personalizado.
+
+> Recordá configurar el audio (opción B) para que la demo funcione en producción.
+
+## 📝 Notas
+
+- Las carátulas se cargan desde las URL provistas originalmente; se pueden cambiar fácilmente en `src/data/songs.ts`.
+- Las canciones pertenecen a sus respectivos autores (Eve, natori, Ado, YOASOBI). Este proyecto es con fines de portafolio.
+
+## 📄 Licencia
+
+Código: MIT. Audio y carátulas: propiedad de sus autores.

@@ -1,0 +1,31 @@
+.section {
+  scroll-margin-top: 72px;
+}
+
+.artistTitle {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent);
+  margin: 40px 0 15px;
+  font-weight: 700;
+}
+
+.row {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 10px 0 25px;
+  margin-bottom: 20px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--bg-elevated);
+}
+
+.row::-webkit-scrollbar {
+  height: 6px;
+}
+
+.row::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 3px;
+}

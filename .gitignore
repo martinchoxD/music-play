@@ -1,0 +1,36 @@
+# Dependencias
+node_modules/
+
+# Build
+dist/
+dist-ssr/
+*.local
+
+# Editor y SO
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.sw?
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Vercel
+.vercel/
+
+# Variables de entorno (credenciales locales)
+.env
+.env.*
+!.env.example
+
+# Audio: las canciones quedan fuera del repositorio (copyright y peso).
+# Colocá tus archivos .mp3 en public/audio/ o apuntá a una URL externa en src/config.ts.
+public/audio/

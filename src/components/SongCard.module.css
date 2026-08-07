@@ -1,0 +1,67 @@
+.card {
+  flex-shrink: 0;
+  width: 170px;
+  background: var(--bg-surface);
+  padding: 15px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--text);
+  text-align: left;
+  transition:
+    transform 0.25s,
+    border-color 0.25s,
+    background 0.25s;
+}
+
+.card:hover,
+.playing {
+  border-color: var(--accent);
+  transform: translateY(-8px);
+  background: var(--bg-elevated);
+}
+
+.coverWrap {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cover {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.playing .title {
+  color: var(--accent);
+}
+
+.artist {
+  color: var(--text-sub);
+  font-size: 12px;
+}
+
+.bars {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+}
+
+@media (max-width: 900px) {
+  .card {
+    width: 150px;
+  }
+}
