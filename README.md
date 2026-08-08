@@ -2,7 +2,7 @@
 
 Reproductor de música web inspirado en Spotify, construido con **React**, **TypeScript** y **Vite**. Listado de canciones por artista, búsqueda en tiempo real, cola de reproducción por sección, modo aleatorio y reproductor fijo en la parte inferior.
 
-> Demo en Vercel: *(agregá tu URL cuando la tengas, p. ej. `https://tu-proyecto.vercel.app`)*
+> 🔗 Demo en vivo: [https://music-play-mq.vercel.app/](https://music-play-mq.vercel.app/)
 
 ---
 
